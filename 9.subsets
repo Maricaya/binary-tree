@@ -1,0 +1,19 @@
+// https://leetcode.com/problems/subsets/
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var subsets = function(nums) {
+    let res = []
+    go(nums, res, [], 0)
+    return res
+};
+
+function go (nums, res, path, index) {
+    res.push(path)
+    for (let j = index; j < nums.length; j++ ) {
+      go(nums, res, [...path, nums[j]], j + 1)
+    }
+}
+nums = [1,2,3]
+console.log(subsets(nums))
