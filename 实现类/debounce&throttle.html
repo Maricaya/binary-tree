@@ -32,9 +32,10 @@
      用于 input、window resize
     */
     function debounce(fn, delay) {
+      let timer
       return function (args) {
-        clearTimeout(fn.id)
-        fn.id = setTimeout(() => {
+        clearTimeout(timer)
+        timer = setTimeout(() => {
           fn(args)
         }, delay)
       }
@@ -56,12 +57,12 @@
     */
 
     function throttle(fn, delay) {
-      let last, deferTimer
+      let last, timer
       return (args) => {
         let now = +new Date()
         if (last && now < last + delay) {
-          clearTimeout(deferTimer)
-          deferTimer = setTimeout(() => {
+          clearTimeout(timer)
+          timer = setTimeout(() => {
             last = now
             fn(args)
           }, delay)
