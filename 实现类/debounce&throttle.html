@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div>
+    没有防抖的input <input id="unDebounce" type="text">
+    <br>
+    防抖后的 input <input id="debounce" type="text">
+    <br>
+    节流后的 input <input id="throttle" type="text">
+  </div>
+  <script>
+    //模拟一段ajax请求
+    function ajax(content) {
+      console.log('ajax request ' + content)
+    }
+
+    let inputa = document.getElementById('unDebounce')
+
+    inputa.addEventListener('keyup', function (e) {
+      ajax(e.target.value)
+    })
+    /* 防抖 debounce.js
+     开电梯门
+     在事件被触发n秒后再执行回调，如果在这n秒内又被触发，则重新计时。
+     用于 input、window resize
+    */
+    function debounce(fn, delay) {
+      return function (args) {
+        clearTimeout(fn.id)
+        fn.id = setTimeout(() => {
+          fn(args)
+        }, delay)
+      }
+    }
+
+    let inputb = document.getElementById('debounce')
+
+    let debounceAjax = debounce(ajax, 500)
+
+    inputb.addEventListener('keyup', function (e) {
+      debounceAjax(e.target.value)
+    })
+    /*
+      节流
+      规定在一个单位时间内，只能触发一次函数。如果这个单位时间内触发多次函数，只有一次生效。
+      技能冷却
+
+      用于 滚动、鼠标不断点击
+    */
+
+    function throttle(fn, delay) {
+      let last, deferTimer
+      return (args) => {
+        let now = +new Date()
+        if (last && now < last + delay) {
+          clearTimeout(deferTimer)
+          deferTimer = setTimeout(() => {
+            last = now
+            fn(args)
+          }, delay)
+        } else {
+          last = now
+          fn(args)
+        }
+      }
+    }
+
+    let throttleAjax = throttle(ajax, 1000)
+
+    let inputc = document.getElementById('throttle')
+    inputc.addEventListener('keyup', function (e) {
+      throttleAjax(e.target.value)
+    })
+
+  </script>
+</body>
+
+</html>
