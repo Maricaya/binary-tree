@@ -1,39 +1,50 @@
 // 实现一个带并发限制的异步调度器 `Scheduler`
 // 保证同时运行的任务最多有两个完善 `Scheduler` 类
+
+/* 
+
+异步任务转为 promise 对象
+- relove 挂载在 异步任务上，以后执行的时候 直接 resolve
+- 当前执行任务 < 2
+  - 推入 当前执行任务 runningTasks
+  - 执行
+  - 从 runningTasks 中移除改任务
+  - 如果还有任务等待执行 waitingTasks
+  - 重复（推入-执行-检查）
+*/ 
 class Scheduler {
   constructor() {
-    this.tasks = [], // 待运行的任务
-    this.usingTask = [] // 正在运行的任务
+    this.runningTasks = []
+    this.waitingTasks = []
   }
-  // promiseCreator 是一个异步函数，return Promise
+
   add(promiseCreator) {
     return new Promise((resolve, reject) => {
-      // 挂载 resolve
       promiseCreator.resolve = resolve
-      if (this.usingTask.length < 2) {
-        this.usingRun(promiseCreator)
-      } else {
-        this.tasks.push(promiseCreator)
+      if (this.runningTasks.length < 2) {
+        this.pushAndRunTasks(promiseCreator)
+      }
+      else {
+        this.waitingTasks.push(promiseCreator)
       }
     })
   }
 
-  usingRun(promiseCreator) {
-    // 推入顺序
-    this.usingTask.push(promiseCreator)
-    // time 之后
+  pushAndRunTasks(promiseCreator) {
+    this.runningTasks.push(promiseCreator)
+    // 执行
     promiseCreator().then(() => {
       promiseCreator.resolve()
-      this.usingMove(promiseCreator)
-      if (this.tasks.length > 0) {
-        this.usingRun(this.tasks.shift())
+      this.removeFinishedTasks(promiseCreator)
+      if (this.waitingTasks.length > 0){
+        this.pushAndRunTasks(this.waitingTasks.shift())
       }
     })
   }
 
-  usingMove(promiseCreator) {
-    let index = this.usingTask.findIndex(promiseCreator)
-    this.usingTask.splice(index, 1)
+  removeFinishedTasks(promiseCreator) {
+    const index = this.runningTasks.findIndex(promiseCreator)
+    this.runningTasks.splice(index, 1)
   }
 }
 
