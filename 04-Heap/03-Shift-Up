@@ -5,9 +5,7 @@ class MaxHeap {
     this.data = [...this.data, ...arr]
     this.count = this.data.length - 1
   }
-  MaxHeap() {
-
-  }
+  MaxHeap() {}
   size () {
     return this.count;
   }
@@ -15,7 +13,9 @@ class MaxHeap {
     return this.count === 0;
   }
   swap(a, b) {
-    // [a, b] = [b, a]
+    const temp = this.data[a]
+    this.data[a] = this.data[b]
+    this.data[b] = temp
   }
   insert(item) {
     // 放在队尾
@@ -25,15 +25,9 @@ class MaxHeap {
   }
   shiftUp(k) {
     // 父节点 < 当前节点，不符合最大堆定义，交换位置
-    // 有索引，就要考虑索引越界的问题 k > 1
-    console.log('1234567', k, this.data, this.data[parseInt(k/2)], this.data[k])
-    
+    // 有索引，就要考虑索引越界的问题 k > 1    
     while(k > 1 && this.data[parseInt(k/2)] < this.data[k]) {
-      console.log('123456%%', k, this.data[parseInt(k/2)], this.data[k])
-      // this.swap(this.data[parseInt(k/2)], this.data[k])
-      const temp = this.data[parseInt(k/2)]
-      this.data[parseInt(k/2)] = this.data[k]
-      this.data[k] = temp
+      this.swap(parseInt(k/2), k)
       k = parseInt(k/2);
     }
   }
