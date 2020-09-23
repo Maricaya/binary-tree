@@ -2,7 +2,9 @@ class MaxHeap {
   data = ['-']
   count = 0
   constructor(arr) {
-    this.data = [...this.data, ...arr]
+    if (arr && arr.length > 0) {
+      this.data = [...this.data, ...arr]
+    }
     this.count = this.data.length - 1
   }
   MaxHeap() {}
@@ -34,7 +36,7 @@ class MaxHeap {
   // 从堆中取出最大值
   extractMax() {
     if (this.count > 0) {
-      const ret = this.data[1]
+      const ret = this.data[1];
       this.swap(1, this.count);
       this.data.pop()
       this.count--;
@@ -45,28 +47,17 @@ class MaxHeap {
   shiftDown(k) {
     // 完全二叉树中，只要有左子节点就说明这个节点是父节点
     while( 2*k <= this.count ) {
+      console.log('111', k)
       let j = 2*k // 在此轮循环中，data[k] 和 data[j] 交换位置
       if(j + 1 <= this.count && this.data[j+1] > this.data[j]) {
         j += 1;
-        if (this.data[k] > this.data[j]) {
-          break;
-        }
-        this.swap(k, j);
-        // 交换之后，k 就成了 j
-        k = j;
       }
+      if (this.data[k] >= this.data[j]) {
+        break;
+      }
+      this.swap(k, j);
+      // 交换之后，k 就成了 j
+      k = j;
     }
-
   }
 }
-
-const maxheap = new MaxHeap([1]);
-maxheap.insert(99)
-for (let index = 0; index < 2; index++) {
-  maxheap.insert(parseInt(Math.random() * 100));
-}
-console.log('maxheap', maxheap)
-
-const a = maxheap.extractMax()
-
-console.log('maxheap', a,  maxheap)
