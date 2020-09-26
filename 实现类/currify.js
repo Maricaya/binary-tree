@@ -11,5 +11,12 @@ const currify = (fn, params = []) => {
     }
 }
 
+const currify2 = (fn, params = []) => 
+    (...args) => params.length + args.length === fn.length
+    ? fn(...params, ...args)
+    : currify(fn, [...params, ...args])
+
 const newAddTwo = currify(addTwo)
+const newAddTwo2 = currify2(addTwo)
 console.log(newAddTwo(1)(2))
+console.log(newAddTwo2(1)(2))
