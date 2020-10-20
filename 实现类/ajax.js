@@ -1,8 +1,8 @@
 // 简洁版 jsonp
 ajax({
-  url: 'http://ux.lezhixing.com.cn/mock/373/table',
+  url: 'http://ux.lezhixing.com.cn/mock/286/jw/schedule/filter/query.do',
   method: 'GET',
-  data: {},
+  data: {type: 'student'},
   timeout: 2000
 }).then((data) => {
   console.log(data)
