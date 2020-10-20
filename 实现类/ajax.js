@@ -32,15 +32,13 @@ function ajax({method, url, data, timeout }) {
   for (const key in data) {
     sendData += "&" + key + "=" + data[key];
   }
+  if (sendData) {
+    sendData = sendData.slice(1);
+  }
   switch (method) {
     case "GET":
       url = `${url}?${sendData}`;
       sendData = null;
-      break;
-    case "POST":
-      if (sendData) {
-        sendData = sendData.slice(1);
-      }
       break;
   }
   return new Promise(((resolve, reject) => {
