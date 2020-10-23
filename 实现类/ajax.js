@@ -7,7 +7,6 @@ ajax({
 }).then((data) => {
   console.log(data)
 })
-
 ajax({
   url: 'http://ux.lezhixing.com.cn/mock/385/region/schedule/role/add.do',
   method: 'POST',
@@ -16,7 +15,6 @@ ajax({
 }).then((data) => {
   console.log(data)
 }).catch()
-
 // //请求数据
 ajax({
   url: 'https://photo.sina.cn/aj/index',
@@ -25,48 +23,52 @@ ajax({
 }).then(data => {
   console.log(data)
 })
-
-function handleData (data) {
+function handleData(data) {
   let sendData = ''
   for (const dataKey in data) {
     sendData += `&${dataKey}=${data[dataKey]}`
   }
   sendData = sendData.slice(1)
+  // a=123&b=456
   return sendData
 }
-
 function ajax({url, method, data, timeout, callback = 'callback'}) {
-  // a=123&b=456
-  if (method === 'JSONP') {
-    data.callback = callback
-    let sendData = handleData(data)
-    let script = document.createElement('script')
-    script.src = url + '?' + sendData
-    console.log(script) // https://photo.sina.cn/aj/index?page=1&cate=recommend&callback=jsoncallback
-    document.body.appendChild(script)
-    return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
+    if (method === 'JSONP') {
+      data.callback = callback
+      const sendData = handleData(data)
+      let script = document.createElement('script')
+      script.src = url + '?' + sendData
+      // https://photo.sina.cn/aj/index?page=1&cate=recommend&callback=callback
+      document.body.appendChild(script)
       window[callback] = (value) => {
-        resolve(value)
+        try {
+          resolve(value)
+        } catch (e) {
+          reject(e)
+        }
         //移除script元素
         script.parentNode.removeChild(script)
       }
-    })
-  }
-  return new Promise(((resolve, reject) => {
-    let sendData = handleData(data)
-    if (method === 'GET') {
-      url += '?' + sendData
-      sendData = null
-    }
-    const xhr = new XMLHttpRequest()
-    xhr.open(method, url, true)
-    xhr.timeout = timeout
-    xhr.send(sendData);
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) { resolve(xhr.response) } else { reject(xhr) }
+    } else {
+      let sendData = handleData(data)
+      if (method === 'GET') {
+        url += '?' + sendData
+        sendData = null
+      }
+      const xhr = new XMLHttpRequest()
+      xhr.open(method, url, true)
+      xhr.timeout = timeout
+      xhr.send(sendData);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            resolve(xhr.response)
+          } else {
+            reject(xhr)
+          }
+        }
       }
     }
-  }))
+  })
 }
-
